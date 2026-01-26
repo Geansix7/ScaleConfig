@@ -1,0 +1,60 @@
+{
+  "name": "scaleconfig",
+  "version": "0.1.0",
+  "description": "A modern web-based configuration tool for managing .TMS files used in electronic retail scales",
+  "type": "module",
+  "license": "MIT",
+  "author": "Vihanga Jayalath <vihangadev@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VihangaDev/ScaleConfig.git"
+  },
+  "bugs": {
+    "url": "https://github.com/VihangaDev/ScaleConfig/issues"
+  },
+  "homepage": "https://tm-xa.vihanga.dev",
+  "keywords": [
+    "tms",
+    "scale",
+    "configuration",
+    "plu",
+    "retail",
+    "keyboard-layout",
+    "react",
+    "typescript"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "zustand": "^5.0.10"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "jsdom": "^27.4.0",
+    "lucide-react": "^0.563.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4",
+    "vitest": "^4.0.18"
+  }
+}

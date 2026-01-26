@@ -1,0 +1,5 @@
+# Keep text files consistent
+* text=auto eol=lf
+
+# TMS files are treated as binary to preserve exact bytes
+*.TMS -text
