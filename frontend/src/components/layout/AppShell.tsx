@@ -29,7 +29,8 @@ export function AppShell() {
   function handleExport() {
     const bytes = exportFile();
     if (!bytes) return;
-    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const safeBytes = new Uint8Array(bytes);
+    const blob = new Blob([safeBytes], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

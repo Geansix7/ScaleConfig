@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'fs';
-import { resolve } from 'path';
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { parseFile, extractPluRecords, extractScpEntries } from '../parser';
 import { writeFile, verifyRoundTrip, updateRowField } from '../writer';
 
-const TMS_PATH = resolve(__dirname, '../../../..', 'A_000.TMS');
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const TMS_PATH = resolve(__dirname, '../../../..', 'samples', 'A_000.TMS');
 
 function loadTestFile(): ArrayBuffer {
   const buf = readFileSync(TMS_PATH);
@@ -150,7 +152,8 @@ describe('Writer - Mutations', () => {
     expect(result.match).toBe(false);
 
     // Parse the output and verify only that PLU changed
-    const doc2 = parseFile(output.buffer);
+    const outputBuffer = output.buffer.slice(output.byteOffset, output.byteOffset + output.byteLength);
+    const doc2 = parseFile(outputBuffer);
     const plus2 = extractPluRecords(doc2);
     const plu9001 = plus2.find(p => p.id === 9001)!;
     expect(plu9001.price).toBe('750,0');

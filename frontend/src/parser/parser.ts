@@ -23,7 +23,6 @@ function detectLineEnding(bytes: Uint8Array): '\r\n' | '\n' {
 
 function splitLines(bytes: Uint8Array, lineEnding: '\r\n' | '\n'): RawLine[] {
   const lines: RawLine[] = [];
-  const leLen = lineEnding.length;
   let start = 0;
 
   for (let i = 0; i < bytes.length; i++) {
