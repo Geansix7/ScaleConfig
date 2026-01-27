@@ -5,6 +5,61 @@ import { writeFile, updateRowField, createPluRow } from '../parser/writer';
 import type { NewPluParams } from '../parser/writer';
 import { PLU_FIELDS, SCP_FIELDS } from '../parser/fieldMap';
 
+const STORAGE_KEY = 'scaleconfig:last-session';
+
+function canUseStorage(): boolean {
+  return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+}
+
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
+}
+
+function base64ToBytes(base64: string): Uint8Array {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes;
+}
+
+function loadPersistedFile(): { fileName: string; bytes: Uint8Array } | null {
+  if (!canUseStorage()) return null;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { fileName: string; data: string };
+    if (!parsed?.data) return null;
+    const bytes = base64ToBytes(parsed.data);
+    return { fileName: parsed.fileName || 'restored.TMS', bytes };
+  } catch {
+    window.localStorage.removeItem(STORAGE_KEY);
+    return null;
+  }
+}
+
+function persistFile(fileName: string, bytes: Uint8Array): void {
+  if (!canUseStorage()) return;
+  try {
+    const data = bytesToBase64(bytes);
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileName, data }));
+  } catch {
+    // Ignore storage errors (quota, private mode, etc.)
+  }
+}
+
+function persistDoc(fileDoc: FileDoc | null, fileName: string): void {
+  if (!fileDoc) return;
+  const bytes = writeFile(fileDoc);
+  persistFile(fileName || 'output.TMS', bytes);
+}
+
 interface AppState {
   // File state
   fileDoc: FileDoc | null;
@@ -26,6 +81,7 @@ interface AppState {
   // Actions - File
   loadFile: (buffer: ArrayBuffer, fileName: string) => void;
   exportFile: () => Uint8Array | null;
+  clearLocalData: () => void;
 
   // Actions - PLU editing
   addPlu: (params: NewPluParams) => { success: boolean; error?: string };
@@ -49,17 +105,40 @@ interface AppState {
   isDirty: () => boolean;
 }
 
+const persisted = loadPersistedFile();
+const persistedState = (() => {
+  if (!persisted) return null;
+  try {
+    const buffer = persisted.bytes.buffer.slice(
+      persisted.bytes.byteOffset,
+      persisted.bytes.byteOffset + persisted.bytes.byteLength,
+    );
+    const doc = parseFile(buffer);
+    return {
+      fileDoc: doc,
+      fileName: persisted.fileName,
+      originalBytes: new Uint8Array(buffer),
+      pluRecords: extractPluRecords(doc),
+      scpEntries: extractScpEntries(doc),
+      dptRecords: extractDptRecords(doc),
+      currentScreen: 'keyboard' as ScreenId,
+    };
+  } catch {
+    return null;
+  }
+})();
+
 export const useStore = create<AppState>((set, get) => ({
   // Initial state
-  fileDoc: null,
-  fileName: '',
-  originalBytes: null,
-  pluRecords: [],
-  scpEntries: [],
-  dptRecords: [],
+  fileDoc: persistedState?.fileDoc ?? null,
+  fileName: persistedState?.fileName ?? '',
+  originalBytes: persistedState?.originalBytes ?? null,
+  pluRecords: persistedState?.pluRecords ?? [],
+  scpEntries: persistedState?.scpEntries ?? [],
+  dptRecords: persistedState?.dptRecords ?? [],
   activeLayer: 0,
   selectedKeyIndex: null,
-  currentScreen: 'dashboard',
+  currentScreen: persistedState?.currentScreen ?? 'dashboard',
   searchQuery: '',
   pluSearchQuery: '',
 
@@ -82,12 +161,32 @@ export const useStore = create<AppState>((set, get) => ({
       currentScreen: 'keyboard',
       selectedKeyIndex: null,
     });
+    persistFile(fileName, bytes);
   },
 
   exportFile: () => {
     const { fileDoc } = get();
     if (!fileDoc) return null;
     return writeFile(fileDoc);
+  },
+
+  clearLocalData: () => {
+    if (canUseStorage()) {
+      window.localStorage.removeItem(STORAGE_KEY);
+    }
+    set({
+      fileDoc: null,
+      fileName: '',
+      originalBytes: null,
+      pluRecords: [],
+      scpEntries: [],
+      dptRecords: [],
+      activeLayer: 0,
+      selectedKeyIndex: null,
+      currentScreen: 'dashboard',
+      searchQuery: '',
+      pluSearchQuery: '',
+    });
   },
 
   // ─── PLU editing ──────────────────────────────────
@@ -111,6 +210,7 @@ export const useStore = create<AppState>((set, get) => ({
     // Refresh parsed records
     const updatedRecords = extractPluRecords(fileDoc);
     set({ pluRecords: updatedRecords });
+    persistDoc(fileDoc, get().fileName);
 
     return { success: true };
   },
@@ -129,6 +229,7 @@ export const useStore = create<AppState>((set, get) => ({
 
     const pluRecords = extractPluRecords(fileDoc);
     set({ pluRecords });
+    persistDoc(fileDoc, get().fileName);
   },
 
   updatePluField: (pluId, field, value) => {
@@ -156,6 +257,7 @@ export const useStore = create<AppState>((set, get) => ({
     // Refresh parsed records
     const pluRecords = extractPluRecords(fileDoc);
     set({ pluRecords });
+    persistDoc(fileDoc, get().fileName);
   },
 
   // ─── Keyboard mapping ────────────────────────────
@@ -184,6 +286,7 @@ export const useStore = create<AppState>((set, get) => ({
     // Refresh SCP entries
     const scpEntries = extractScpEntries(fileDoc);
     set({ scpEntries });
+    persistDoc(fileDoc, get().fileName);
   },
 
   clearKey: (layer, keyIndex) => {

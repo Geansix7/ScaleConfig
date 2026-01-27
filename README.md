@@ -22,7 +22,8 @@ If you do not change a record, the file is written back byte-for-byte.
 - **Fast and lightweight** React + Vite stack
 
 ## Screenshots
-Add screenshots or GIFs here.
+![PLU key layout](docs/screenshots/scaleconfig-dashboard.png)
+![PLU editor](docs/screenshots/scaleconfig-plu-edit.png)
 
 ## Quick Start
 ### Prerequisites

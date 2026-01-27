@@ -12,6 +12,7 @@ export function AppShell() {
   const isDirty = useStore(s => s.isDirty);
   const loadFile = useStore(s => s.loadFile);
   const exportFile = useStore(s => s.exportFile);
+  const clearLocalData = useStore(s => s.clearLocalData);
 
   function handleImport() {
     const input = document.createElement('input');
@@ -37,6 +38,14 @@ export function AppShell() {
     a.download = fileName || 'output.TMS';
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  function handleClearLocalData() {
+    const ok = window.confirm(
+      'This will clear locally saved data and reset the app. You will need to re-import your .TMS file. Continue?'
+    );
+    if (!ok) return;
+    clearLocalData();
   }
 
   const dirty = isDirty();
@@ -89,7 +98,20 @@ export function AppShell() {
           {currentScreen === 'keyboard' && <KeyboardScreen />}
           {currentScreen === 'plu' && <PluScreen />}
           {currentScreen === 'settings' && (
-            <div className="p-6 text-warm-500 text-sm">Settings (coming soon)</div>
+            <div className="p-6">
+              <h2 className="text-lg font-semibold text-warm-900 mb-4">Settings</h2>
+              <div className="bg-white border border-warm-200 rounded-lg p-4 max-w-lg">
+                <div className="text-sm text-warm-700 mb-3">
+                  Clear locally saved data to reset the app and remove the last loaded file.
+                </div>
+                <button
+                  onClick={handleClearLocalData}
+                  className="px-4 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                >
+                  Clear Local Data
+                </button>
+              </div>
+            </div>
           )}
         </main>
       </div>
