@@ -29,6 +29,12 @@ function base64ToBytes(base64: string): Uint8Array {
   return bytes;
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const buffer = new ArrayBuffer(bytes.length);
+  new Uint8Array(buffer).set(bytes);
+  return buffer;
+}
+
 function loadPersistedFile(): { fileName: string; bytes: Uint8Array } | null {
   if (!canUseStorage()) return null;
   try {
@@ -109,10 +115,7 @@ const persisted = loadPersistedFile();
 const persistedState = (() => {
   if (!persisted) return null;
   try {
-    const buffer = persisted.bytes.buffer.slice(
-      persisted.bytes.byteOffset,
-      persisted.bytes.byteOffset + persisted.bytes.byteLength,
-    );
+    const buffer = toArrayBuffer(persisted.bytes);
     const doc = parseFile(buffer);
     return {
       fileDoc: doc,
